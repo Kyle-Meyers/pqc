@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PQC - Make the Switch!</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <link rel="stylesheet" href="styles.css">
+
+    <body>
+        <h1>THE ENTIRE INTERNET HAS AN EXPIRATION DATE</h1>
+        <p>HOW LONG UNTIL YOUR DATA IS RELEASED: <span id="countdown"></span><span cite-id="4"></span></p>
+        <p>WHENEVER YOU DO THINGS ON THE INTERNET, INCLUDING:</p>
+        <ul>
+            <li>Entering passwords</li>
+            <li>Sending "private" messages to others</li>
+            <li>Writing confidential information</li>
+            <li>Storing medical records or financial data</li>
+            <li>Shopping online, booking travel, working remotely</li>
+            <li>Using public WiFi or corporate networks</li>
+        </ul>
+        <p>YOU THINK YOU ARE SAFE BECAUSE YOUR DATA IS ENCRYPTED. AND YOU HAVE A RIGHT TO FEEL THAT WAY, BUT ONLY IF THE ENCRYPTION ACTUALLY HOLDS UP AGAINST FUTURE THREATS.</p>
+        <p>YOUR CURRENT PROTECTION IS RSA ENCRYPTION, WHICH RELIES ON CLASSICAL COMPUTERS STRUGGLING TO FACTOR HUGE NUMBERS. THIS IS THE MATH OF PUBLIC KEY CRYPTOGRAPHY THAT KEEPS YOUR PASSWORDS SECURE AND YOUR WEB TRAFFIC PRIVATE. WATCH HOW IT WORKS:<span cite-id="2"></span></p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/hm8s6FAc4pg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <p>BUT THERE IS A MAJOR ISSUE:</p>
+        <h2>QUANTUM COMPUTERS</h2>
+        <h3>WHAT ARE QUANTUM COMPUTERS?</h3>
+        <p>Instead of using the standard 1's and 0's (bits), quantum computers use atoms called "qubits" that exist in a state of superposition, meaning they can be in-between 0 and 1 until measured, when it will randomly choose with probabilities based on its current position. This allows them to perform certain calculations exponentially faster than classical computers. Specifically for cryptography, this means quantum computers can run Shor's Algorithm, which can factor the huge numbers that protect your encrypted data in just a couple minutes<span cite-id="11"></span></p>
+        <img src="https://poetryinphysics.files.wordpress.com/2017/03/qubit.png?w=743" height="200">
+        <p>For a simulation and explanation of qubits, check out <a href="https://www.jonvet.com/tools/quantum-state-simulator">this website</a>.</p>
+        <p>Try out Shor's algorithm here:</p>
+        <div id="shors-container">
+            <label for="shors-n">Number to Factor: </label><input id="shors-n" type="number" value="15" min="2" max="9007199254740991" onchange="enforceMinMax(this)"/>
+            <button id="shors-start" onclick="shorsStart();">Factor</button>
+            <br><label for="shors-g" id="shors-g-label" style="display: none;">Optional: choose guess (blank = random): </label><input id="shors-g" type="number" style="display: none;" min="2" onchange="enforceMinMax(this);" />
+            <button id="shors-run" onclick="shors();" style="display: none;">Run The Algorithm!</button>
+            <div id="shors-text">
+                <p id="shors-text-1"></p>
+                <p id="shors-text-2"></p>
+                <p id="shors-text-single"></p>
+                <button id="shors-previous" style="display: none;" onclick="previous();">Previous</button>
+                <button id="shors-next" style="display: none;" onclick="next();">Next</button>
+            </div>
+        </div>
+        <p>GOOD NEWS - QUANTUM COMPUTERS AREN'T POWERFUL ENOUGH YET TO RUN SHOR'S! WHY WORRY THEN? BECAUSE THE REAL THREAT HAPPENS RIGHT NOW THROUGH A STRATEGY CALLED "HARVEST NOW, DECRYPT LATER."</p>
+        <h3>HARVEST NOW, DECRYPT LATER (HNDL)</h3>
+        <p>This is where hackers and even intelligence agencies collect encrypted data RIGHT NOW, and store it quietly in massive archives. It is fully possible, and would be nearly undetectable, that adversaries are storing terabytes of data now, simply waiting for quantum computers to mature enough to decrypt it. Once a quantum computer arrives (and most experts predict 2030), they will have YEARS of valuable private data ready to read.</p>
+        <h3>WHAT POST-QUANTUM CRYPTOGRAPHY (PQC) IS AND WHY IT MATTERS</h3>
+        <p>POST-QUANTUM CRYPTOGRAPHY, OR PQC FOR SHORT, ARE NEW ENCRYPTION ALGORITHMS DESIGNED TO RESIST ATTACKS FROM BOTH CLASSICAL COMPUTERS AND QUANTUM COMPUTERS. THESE SOLUTIONS EXIST RIGHT NOW.</p>
+        <h4>THE HISTORY</h4>
+        <p>In 1994, Peter Shor published his paper introducing Shor's algorithm, bringing early attention to the problem of PQC.<span cite-id="11"></span> After a couple decades of quantum computers slowly becoming real and improving in their capabilities, governments began to give real thought to PQC migration. In 2016, NIST published a "Report on Post-Quantum Cryptography", beginning their 8-year process of finding potential PQC algorithms.<span cite-id="1"></span> Research teams around the world submitted 82 algorithms, with others finding vulnerabilities and issues with several, before finally ending with 4 selected algorithms to be implemented.</p>
+        <h4>THE FOUR SELECTED PQC ALGORITHMS:</h4>
+        <ul>
+            <li>
+                <h4 style="margin: 0 auto 0 auto">FIPS 203: ML-KEM (MODULE-LATTICE-BASED KEY-ENCAPSULATION MECHANISM)<span cite-id="8"></span></h4>
+                <p>This is the method used to share an encryption key between two servers, like your phone getting a key from a website's server to ensure communication between the two is encrypted. It uses a lattice-based method, where there is a massive multi-dimensional grid of dots, and the computer moves one of the dots a little bit. Using the key, you can figure out which dot moved, but it is too difficult to do otherwise, even for a quantum computer.</p>
+            </li>
+            <li>
+                <h4 style="margin: 0 auto 0 auto">FIPS 204: ML-DSA (MODULE-LATTICE-BASED DIGITAL SIGNATURE ALGORITHM)<span cite-id="7"></span></h4>
+                <p>This is a signature algorithm, which essentially verifies that a file comes from the person who claimed to make it, and it has not been tampered with. This is necessary for tasks like software updates. This also uses a lattice-based method, but slightly differently. You can verify that a specific person made the file by seeing that their “key,” which is essentially a specific path through the lattice, matches up exactly with the lattice embedded in the file.</p>
+            </li>
+            <li>
+                <h4 style="margin: 0 auto 0 auto">FIPS 205: SLH-DSA (STATELESS HASH-BASED DIGITAL SIGNATURE ALGORITHM)<span cite-id="9"></span></h4>
+                <p>This is the backup method if someone happens to find a way to break the lattice method. This works by using thousands of hash functions, which are functions that take data, and turn it into an unreadable mess of characters. This is also uncrackable by quantum computers, but it is less desirable, because the keys and signatures are longer and the function is slower.</p>
+            </li>
+            <li>
+                <h4 style="margin: 0 auto 0 auto">FIPS 206: FN-DSA (FFT (FAST-FOURIER TRANSFORM) OVER NTRU-LATTICE-BASED DIGITAL SIGNATURE ALGORITHM)<span cite-id="5"></span></h4>
+                <p>This is the method made for small devices. It also uses lattices, but a specific kind known as a NTRU lattice. By using these and tons of complex math using FFT, it ends up creating much smaller keys and signatures. It is perfect for things like Raspberry Pis or places with poor internet connection, where large keys could create a storage or bandwidth bottleneck. The only downside is that it is much harder to implement and the complexity leads to errors occurring while implementing, so it should be used when necessary.</p>
+            </li>
+            <li>
+                <h4 style="margin: 0 auto 0 auto">LATER ADDITION: HQC (Hamming Quasi-Cyclic)<span cite-id="6"></span></h4>
+                <p>This is another alternative published a year after the competition to add more variation rather than only lattice-based methods. This sends the message with built-in error correction arranged in repeated blocks with added noise. The private key can get rid of the noise. This is useful, but has larger key sizes and larger messages compared to lattice-based methods.</p>
+            </li>
+        </ul>
+        <h2>HOW TO MIGRATE YOUR SYSTEMS</h2>
+        <h3>PQC Migration Roadmap</h3> 
+        <p>The Post-Quantum Cryptography Coalition (PQCC) recommends the following phased approach:<span cite-id="10"></span></p> 
+        <table border="1" style="border-collapse: collapse;"> 
+            <tr> 
+                <th>Stage</th> 
+                <th>Key Activities</th> 
+            </tr> 
+            <tr> 
+                <td><strong>Preparation</strong></td> 
+                <td>Assign leadership and identity PQC importance across systems. Inventory existing cryptography and make stakeholders aware so the organization is ready to fund, staff, and prioritize migration.</td> 
+            </tr> 
+            <tr> 
+                <td><strong>Baseline Understanding</strong></td> 
+                <td>Build a complete inventory of cryptographic systems. Prioritize critical assets for migration, identify stakeholders, and develop messaging to align business and technical owners.</td> 
+            </tr> 
+            <tr> 
+                <td><strong>Planning and Execution</strong></td> 
+                <td>Define migration plans, budgets, and timelines; select and acquire PQC solutions. Implement chosen solutions, and validate proper implementation through testing.</td> 
+            </tr> 
+            <tr>
+                <td><strong>Monitoring and Evaluation</strong></td>
+                <td>Create workforce training and measurable tracking for migration progress. Continuously monitor systems, update controls and processes, and iterate to ensure long-term security.</td>
+            </tr>
+        </table> 
+        <div id="citation-container"></div>
+
+
+
+        <script>
+            // COUNTDOWN
+            const targetDate = new Date('January 1, 2031 00:00:00').getTime();
+            const timer = setInterval(updateCountdown, 1000); // once a second
+            
+            function updateCountdown() {
+                const currentTime = new Date().getTime();
+                const distance = targetDate - currentTime;
+                
+                if (distance < 0) {
+                    document.getElementById("countdown").textContent = `0:0:0:0:0`;
+                }
+                
+                const years = Math.floor(distance / (1000 * 60 * 60 * 24 * 365));
+                const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById("countdown").textContent = `${years}:${days}:${hours}:${minutes}:${seconds}`;
+            }
+
+            // SHORS SIM (taken from my older project)
+            function gcd(a, b) {
+                if (b === 0n) return a;
+                return gcd(b, a % b);
+            }
+
+            function isPrime(n) {
+                var max = BigInt(Math.floor(Math.sqrt(Number(n))));
+                for (var i = 2n; i <= max; i++) {
+                    if (n % i === 0n) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function isPrimePower(n) {
+                let sqrtN = Math.sqrt(n) + 1;
+                let primes = [];
+                let prime = Array.from({length: sqrtN+1}, (_, i) => 0);
+
+                for(let i = 0; i < sqrtN; i++)
+                    prime[i] = true;
+
+                for(let p = 2; p * p <= sqrtN; p++) {
+                    if (prime[p] == true) {
+                        for(let i = p * 2; i <= sqrtN; i += p)
+                            prime[i] = false;
+                    }
+                }
+
+                for(let i = 2; i <= sqrtN; i++) {
+                    if (prime[i] == true)
+                        primes.push(i);
+                }
+
+                for(let ii = 0; ii < primes.length; ii++) {
+                    let i = primes[ii];
+                    if (n % i == 0) {
+                        let c = 0;
+                        while (n % i == 0) {
+                            n /= i;
+                            c += 1;
+                        }
+
+                        if (n == 1)
+                            return [i, c];
+                        else
+                            return false;
+                    }
+                }
+                return false;
+            }
+
+            function formatList(list, crop=true) {
+                if (crop && list.length > 6) {
+                    return `[${list.slice(0, 3).map(sublist => `(${sublist.map(formatNumber).join(', ')})`).join(', ')}...${list.slice(-3).map(sublist => `(${sublist.map(formatNumber).join(', ')})`).join(', ')}]`;
+                }
+                return '[' + list.map(sublist => `(${sublist.map(formatNumber).join(', ')})`).join(', ') + ']';
+            }
+
+            function formatNumber(num, digits=true) {
+                let numStr = num.toString();
+                if (numStr.length > 45) {
+                    if (digits) {
+                        return `${numStr.slice(0, 3)}...${numStr.slice(-3)} (${numStr.length} digits)`;
+                    } else {
+                        return `${numStr.slice(0, 3)}...${numStr.slice(-3)}`;
+                    }
+                }
+                return numStr;
+            }
+
+            let outputs = [];
+            let i = 0;
+
+            function next() {
+                i++;
+                loadText(i);
+            }
+
+            function previous() {
+                i--;
+                loadText(i);
+            }
+
+            function loadText(i) {
+                let text = outputs[i];
+                if (text.length == 1) {
+                    document.getElementById("shors-text-single").innerText = text[0];
+                    document.getElementById("shors-text-1").innerText = "";
+                    document.getElementById("shors-text-2").innerText = "";
+                    document.getElementById("shors-text").style.padding = "0 15px 15px 15px";
+                } else {
+                    document.getElementById("shors-text-1").innerText = text[0];
+                    document.getElementById("shors-text-2").innerText = text[1];
+                    document.getElementById("shors-text-single").innerText = "";
+                    document.getElementById("shors-text").style.padding = "15px";
+                }
+
+                if (i == outputs.length - 1) {
+                    document.getElementById("shors-next").style = "display: none;";
+                }
+                else {
+                    document.getElementById("shors-next").style = "";
+                }
+
+                if (i == 0) {
+                    document.getElementById("shors-previous").style = "display: none;";
+                }
+                else {
+                    document.getElementById("shors-previous").style = "";
+                }
+            }
+
+            function shorsStart() {
+                outputs = [];
+                i = 0;
+
+                let N = BigInt(document.getElementById("shors-n").value);
+
+                if (isPrime(N)) {
+                    outputs.push([`${N} is prime, please input a composite non-prime power number`]);
+                    loadText(i);
+                    return false;
+                }
+
+                let primePower = isPrimePower(Number(N));
+                if (primePower !== false) {
+                    outputs.push([`${N} is a power of a prime (${primePower[0]}^${primePower[1]}), please input a composite non-prime power number`]);
+                    loadText(i);
+                    return false;
+                }
+
+                if (N >= 10000n) {
+                    outputs.push([`WARNING: You're attempting to factor a large number, it's likely that this simulation won't attempt p values large enough to get the correct answer. Consider choosing a smaller number.`]);
+                    loadText(i);
+                }
+
+                document.getElementById("shors-g").style = "";
+                document.getElementById("shors-g").max = `${N-1n}`;
+                document.getElementById("shors-run").style = "";
+                document.getElementById("shors-g-label").style = "";
+                document.getElementById("shors-text-single").innerText = "";
+                document.getElementById("shors-text-1").innerText = "";
+                document.getElementById("shors-text-2").innerText = "";
+                document.getElementById("shors-next").style = "display: none;";
+                document.getElementById("shors-previous").style = "display: none;";
+                return true;
+            }
+
+            function shors() {
+                if (shorsStart() == false) return;
+
+                let g = BigInt(document.getElementById("shors-g").value);
+                let N = BigInt(document.getElementById("shors-n").value);
+
+                if (g == 0n) {
+                    g = BigInt(Math.floor(Math.random() * (Number(N) - 2) + 2));
+                    while (gcd(N, g) != 1n) {
+                        g = BigInt(Math.floor(Math.random() * (Number(N) - 2) + 2));
+                    }
+                    outputs.push([`We are factoring ${N}, and the random guess for a factor is ${g}`]);
+                }
+                else {
+                    outputs.push([`We are factoring ${N}, and the guess for a factor is ${g}`]);
+                }
+
+                let gcdNg = gcd(N, g);
+
+                if (gcdNg !== 1n) {
+                    outputs.push([`The GCD of N (${N}) and g (${g}) is ${gcdNg}`, `You got lucky! ${gcdNg} is already a factor of N, so we're done!`]);
+                    loadText(i);
+                    return;
+                }
+
+                outputs.push([`The GCD of N and g is ${gcdNg}`, `There are no shared factors between ${N} and ${g}, so let's move on to the next step`]);
+                var ps = [];
+                let maxp = 1n;
+                for (let i = 0; i < 5000; i++) {
+                    ps.push(maxp);
+                    maxp++;
+                }
+                outputs.push([`Let's first create a "superposition" of a few possible p values`, `[${ps.slice(0, 3).join(", ")}...${ps.slice(-3).join(", ")}]`]);
+
+
+                var pGToTheP = [];
+                for (let p of ps) {
+                    pGToTheP.push([p, g ** p]);
+                }
+
+                outputs.push([`Now let's turn that into a superposition of p's and g^p's`, `[${formatList(pGToTheP)}]`]);
+
+                var pAndR = [];
+                pGToTheP.forEach(function (item) {
+                    pAndR.push([item[0], item[1] % N]);
+                });
+
+                outputs.push([`Now let's turn that into a superposition of p's and remainders of g^p / N`, `[${formatList(pAndR)}]`]);
+
+                let values = pAndR.map(v => v[1]);
+
+                if (new Set(values).size == pAndR.length) {
+                    outputs.push([`Every value in this list is different. On a Quantum Computer with more p values being tested, it would find at least two of the same values and output the correct answer. Try again with a smaller number or different g value to get something that might work.`]);
+                    loadText(i);
+                    return;
+                }
+
+                pAndR = pAndR.filter(e => values.filter(v => v == e[1]).length !== 1); // Wouldn't happen on quantum computers, but included so it works more often
+
+                let randomR = pAndR[Math.floor(Math.random() * pAndR.length)][1];
+                pAndR = pAndR.filter(e => e[1] == randomR);
+
+                if (pAndR.length < 20) {
+                    outputs.push([`Now let's measure a random remainder, ${randomR}. Because of the rules of entanglement, now the superposition only contains things with that remainder:`, formatList(pAndR, crop=false)]);
+                } else {
+                    outputs.push([`Now let's measure a random remainder, ${randomR}. Because of the rules of entanglement, now the superposition only contains things with that remainder:`, formatList(pAndR)]);
+                }
+
+                let p = pAndR[1][0] - pAndR[0][0];
+
+                let xOverP = [];
+                for (let i = 0; i < 3; i++) {
+                    let x = Math.floor(Math.random() * (10 - 1) + 1);
+                    while (x /
+
+            Number(p) in xOverP) {
+                        x = Math.floor(Math.random() * (10 - 1) + 1);
+                    }
+                    xOverP.push(x / Number(p));
+                }
+
+                outputs.push([`Remember, we can't just measure this superposition because that will collapse it into one random, useless state. So instead we send it through a Quantum Fourier Transform, which outputs a random number over p, x/p. After doing all of this 3 times, the 3 random values we get are ${xOverP[0]}, ${xOverP[1]}, and ${xOverP[2]}. A simple calculation can find p to be ${p} based on that.`]);
+
+                if (p % 2n === 1n) {
+                    outputs.push([`The algorithm didn't output the factors this time. In this case, the correct p was odd. Because we will bring something to the p/2 power, it will not be an integer. Try again with another g value and it will hopefully work.`]);
+                    loadText(i);
+                    return;
+                }
+
+                let plusOne = g ** (p / 2n) + 1n;
+                let minusOne = g ** (p / 2n) - 1n;
+                outputs.push([`To find the factors, first we find g^(p/2) ± 1. In this case, it is ${g}^(${p}/2) ± 1, which comes out to be ${formatNumber(plusOne)} and ${formatNumber(minusOne)}`]);
+
+                let gcd1 = gcd(plusOne, N);
+                let gcd2 = gcd(minusOne, N);
+                outputs.push([`Now we need to find the GCD of each of those two and N.`, `GCD(${formatNumber(plusOne, digits=false)}, ${N}) = ${formatNumber(gcd1)}, and GCD(${formatNumber(minusOne, digits=false)}, ${N}) = ${formatNumber(gcd2)}.`]);
+
+                if (gcd1 * gcd2 === N && gcd1 !== 1n && gcd2 !== 1n) {
+                    outputs.push([`The algorithm correctly found factors of ${N}! They are ${gcd1} and ${gcd2}.`]);
+                } else {
+                    if (plusOne === N || minusOne === N) {
+                        outputs.push([`The algorithm seemed to work incorrectly. This can randomly happen depending on the g, so try again and hopefully it will work.`, `It didn't work because in this case, one of the guesses is ${N}, making their GCDs the trivial case of 1 and ${N}.`]);
+                    } else if (plusOne % N === 0n || minusOne % N === 0n) {
+                        outputs.push([`The algorithm seemed to work incorrectly. This can randomly happen depending on the g, so try again and hopefully it will work.`, `It didn't work because in this case, one of the guesses is a multiple of ${N}, making their GCD values the trivial case of 1 and ${N}.`]);
+                    } else if (N % gcd1 === 0n && N % gcd2 === 0n) {
+                        outputs.push([`In this case, the GCDs didn't correctly find THE SAME PAIR of factors, but ${gcd1} is a factor, and so is ${gcd2}. Now it's easy to find the other factors using simple division.`, `The two pairs of factors found are ${gcd1} and ${N / gcd1}, and ${gcd2} and ${N / gcd2}`]);
+                    }
+                }
+
+                loadText(i);
+            }
+
+            function enforceMinMax(el) {
+              if (el.value != "") {
+                if (parseInt(el.value) < parseInt(el.min)) {
+                  el.value = el.min;
+                }
+                if (parseInt(el.value) > parseInt(el.max)) {
+                  el.value = el.max;
+                }
+              }
+            }
+
+            // CITATION SCRIPT
+            const citationData = [
+                {
+                    id: "1",
+                    content: "Boutin, Chad. “NIST Asks Public to Help Future-Proof Electronic Information.” NIST, 20 Dec. 2016, www.nist.gov/news-events/news/2016/12/nist-asks-public-help-future-proof-electronic-information."
+                },
+                {
+                    id: "2",
+                    content: "BrainWave. “The RSA Encryption Algorithm - How Does It Actually Work + Step-By-Step Example.” YouTube, 28 Sept. 2024, www.youtube.com/watch?v=hm8s6FAc4pg. Accessed 16 Aug. 2025."
+                },
+                {
+                    id: "3",
+                    content: "Chrome Secure Web Networking Team. “Cultivating a Robust and Efficient Quantum-Safe HTTPS.” Google, 27 Feb. 2026, blog.google/security/cultivating-a-robust-and-efficient-quantum-safe-https/. Accessed 8 June 2026."
+                },
+                {
+                    id: "4",
+                    content: "Freeze, Di. “Y2Q Will Be Here Sooner than You Think.” Cybercrime Magazine, 27 July 2022, cybersecurityventures.com/y2q-will-be-here-sooner-than-you-think/."
+                },
+                {
+                    id: "5",
+                    content: "NIST. FIPS 206: FN-DSA (Falcon). 25 Sept. 2025, csrc.nist.gov/presentations/2025/fips-206-fn-dsa-falcon. Accessed 8 June 2026."
+                },
+                {
+                    id: "6",
+                    content: "NIST. HQC Announced as a 4th Round Selection | CSRC. 11 Mar. 2025, csrc.nist.gov/News/2025/hqc-announced-as-a-4th-round-selection."
+                },
+                {
+                    id: "7",
+                    content: "NIST. Module-Lattice-Based Digital Signature Standard. Jan. 2024, https://doi.org/10.6028/nist.fips.204."
+                },
+                {
+                    id: "8",
+                    content: "NIST. Module-Lattice-Based Key-Encapsulation Mechanism Standard. Jan. 2024, https://doi.org/10.6028/nist.fips.203."
+                },
+                {
+                    id: "9",
+                    content: "NIST. Stateless Hash-Based Digital Signature Standard. Jan. 2024, https://doi.org/10.6028/nist.fips.205."
+                },
+                {
+                    id: "10",
+                    content: "Post Quantum Cryptography Coalition. “Post-Quantum Cryptography (PQC) Migration Roadmap.” Pqcc.org, The MITRE Corporation, May 2025, pqcc.org/wp-content/uploads/2025/05/PQC-Migration-Roadmap-PQCC-2.pdf."
+                },
+                {
+                    id: "11",
+                    content: "Shor, P. W. “Algorithms for Quantum Computation: Discrete Logarithms and Factoring.” Proceedings 35th Annual Symposium on Foundations of Computer Science, 1994, pp. 124–34, https://doi.org/10.1109/sfcs.1994.365700."
+                }
+            ];
+
+            function initCitations() {
+            const citationContainer = document.getElementById('citation-container');
+            const ul = document.createElement('ul');
+
+            citationData.forEach(cite => {
+                const li = document.createElement('li');
+
+                li.innerHTML = `<strong>${cite.id}:</strong> ${cite.content}`;
+                li.dataset.citeId = cite.id;
+
+                ul.appendChild(li);
+            });
+
+            citationContainer.appendChild(ul);
+
+            citationData.forEach(cite => {
+                document.querySelectorAll(`[cite-id="${cite.id}"]`).forEach(refEl => {
+                refEl.innerHTML = `<a href="#citation-container">[${cite.id}]</a>`;
+                });
+            });
+            }
+
+            window.addEventListener('DOMContentLoaded', initCitations);
+        </script>
+    </body>
+</html>
