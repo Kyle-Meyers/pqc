@@ -157,7 +157,8 @@ input::-webkit-inner-spin-button {
 }
 
 table {
-    margin-bottom: 1rem;
+    max-width: 800px;
+    margin: 0 auto 1rem auto;
 }
 
 @media (max-width: 600px) {
